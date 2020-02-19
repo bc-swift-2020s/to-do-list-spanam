@@ -35,6 +35,7 @@ class DetailViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "UnwindFromSave" {
             toDoItem = toDoField.text
+            toDoNoteItem = toDoNoteView.text
         }
     }
     
