@@ -12,6 +12,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var toDoArray = ["Todo 1", "Todo 2", "Todo 3"]
+    var toDoNotesArray = ["Note 1 temp data. Purposefully long.", "Note 2 temp data. Purposefully long.", "Note 3 temp data. Purposefully long."]
+    
+    @IBOutlet weak var editBarButton: UIBarButtonItem!
+    @IBOutlet weak var addBarButton: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +33,18 @@ class ViewController: UIViewController {
             if let selectedPath = tableView.indexPathForSelectedRow {
                 tableView.deselectRow(at: selectedPath, animated: false)
             }
+        }
+    }
+    
+    @IBAction func editBarButtonPressed(_ sender: UIBarButtonItem) {
+        if tableView.isEditing {
+            tableView.setEditing(false, animated: true)
+            addBarButton.isEnabled = true
+            editBarButton.title = "Edit"
+        } else {
+            tableView.setEditing(true, animated: true)
+            addBarButton.isEnabled = false
+            editBarButton.title = "Done"
         }
     }
     
@@ -54,6 +70,21 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         cell.textLabel?.text = toDoArray[indexPath.row]
+        cell.detailTextLabel?.text = toDoNotesArray[indexPath.row]
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            toDoArray.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let itemToMove = toDoArray[sourceIndexPath.row]
+        toDoArray.remove(at: sourceIndexPath.row)
+        toDoArray.insert(itemToMove, at: destinationIndexPath.row)
+    }
+    
 }
