@@ -11,8 +11,12 @@ import UIKit
 class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
-    var toDoArray = ["Todo 1", "Todo 2", "Todo 3"]
-    var toDoNotesArray = ["Note 1 temp data. Purposefully long.", "Note 2 temp data. Purposefully long.", "Note 3 temp data. Purposefully long."]
+//    var toDoArray = ["Todo 1", "Todo 2", "Todo 3"]
+//    var toDoNotesArray = ["Note 1 temp data. Purposefully long.", "Note 2 temp data. Purposefully long.", "Note 3 temp data. Purposefully long."]
+    var toDoArray = [String]()
+    var toDoNotesArray = [String]()
+    
+    var defaultsData = UserDefaults.standard
     
     @IBOutlet weak var editBarButton: UIBarButtonItem!
     @IBOutlet weak var addBarButton: UIBarButtonItem!
@@ -22,6 +26,14 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         tableView.delegate = self
         tableView.dataSource = self
+        
+        toDoArray = defaultsData.stringArray(forKey: "toDoArray") ?? [String]()
+        toDoNotesArray = defaultsData.stringArray(forKey: "toDoNotesArray") ?? [String]()
+    }
+    
+    func saveDefaultsData() {
+        defaultsData.set(toDoArray, forKey: "toDoArray")
+        defaultsData.set(toDoNotesArray, forKey: "toDoNotesArray")
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -61,6 +73,7 @@ class ViewController: UIViewController {
             toDoNotesArray.append(sourceViewController.toDoNoteItem!)
             tableView.insertRows(at: [newIndexPath], with: .automatic)
         }
+        saveDefaultsData()
     }
     
 }
@@ -82,6 +95,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             toDoArray.remove(at: indexPath.row)
             toDoNotesArray.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
+            saveDefaultsData()
         }
     }
     
@@ -91,7 +105,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         toDoArray.remove(at: sourceIndexPath.row)
         toDoNotesArray.remove(at: sourceIndexPath.row)
         toDoArray.insert(itemToMove, at: destinationIndexPath.row)
-        toDoNotesArray.remove(at: sourceIndexPath.row)
+        toDoNotesArray.insert(noteToMove, at: destinationIndexPath.row)
+        saveDefaultsData()
     }
     
 }
